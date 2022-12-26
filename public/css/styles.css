@@ -1,0 +1,22 @@
+@font-face {
+  font-family: "3x5";
+  src:
+    url("/fonts/3x5/3x5.ttf") format("truetype"),
+    url("/fonts/3x5/3x5.woff") format("woff"),
+    url("fonts/3x5/3x5.woff2") format("woff2");
+  font-weight: normal;
+  font-style: normal;
+}
+
+html,
+body {
+  height: 100%;
+  margin: 0;
+}
+
+canvas {
+  position: absolute;
+  image-rendering: pixelated;
+  font-smooth: never;
+  -webkit-font-smoothing: none;
+}
