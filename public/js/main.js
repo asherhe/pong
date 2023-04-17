@@ -72,7 +72,7 @@ function init() {
 init();
 
 let font3x5 = new Image(30, 5);
-font3x5.src = "/img/3x5font.png";
+font3x5.src = "../img/3x5font.png";
 
 function render() {
   ctx.clearRect(0, 0, width, height);
