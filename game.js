@@ -31,12 +31,14 @@ class Game {
     socket.emit("init", config);
     socket.emit("state", this.gameState);
 
-    socket.on("keydown", (dir) => {
-      this.gameState.players[id][dir] = true;
-    });
-    socket.on("keyup", (dir) => {
-      this.gameState.players[id][dir] = false;
-    });
+    if (id < 2) {
+      socket.on("keydown", (dir) => {
+        this.gameState.players[id][dir] = true;
+      });
+      socket.on("keyup", (dir) => {
+        this.gameState.players[id][dir] = false;
+      });
+    }
 
     this.sockets.push(socket);
 
