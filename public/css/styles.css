@@ -12,11 +12,11 @@ html,
 body {
   height: 100%;
   margin: 0;
+  background-color: #000;
 }
 
 canvas {
   position: absolute;
   image-rendering: pixelated;
-  font-smooth: never;
-  -webkit-font-smoothing: none;
+  background-color: #fff;
 }
