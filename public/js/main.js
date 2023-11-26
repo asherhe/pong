@@ -4,6 +4,14 @@
   socket.on("init", init);
   socket.on("state", render);
 
+  setInterval(() => {
+    let start = Date.now();
+    socket.emit("ping");
+    socket.once("pong", function () {
+      console.log(Date.now() - start);
+    });
+  }, 5000);
+
   let config, width, height;
 
   function init(data) {
@@ -23,17 +31,13 @@
         let scale = windowHeight / height;
         $canvas.css(
           "transform",
-          `translate(${(windowWidth - width) / 2}px, ${
-            (windowHeight - height) / 2
-          }px) scale(${scale})`
+          `translate(${(windowWidth - width) / 2}px, ${(windowHeight - height) / 2}px) scale(${scale})`
         );
       } else {
         let scale = windowWidth / width;
         $canvas.css(
           "transform",
-          `translate(${(windowWidth - width) / 2}px, ${
-            (windowHeight - height) / 2
-          }px) scale(${scale})`
+          `translate(${(windowWidth - width) / 2}px, ${(windowHeight - height) / 2}px) scale(${scale})`
         );
       }
     }

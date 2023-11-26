@@ -20,6 +20,10 @@ app.use(express.static(config.publicDir));
 io.on("connection", (socket) => {
   console.log(`${socket.id} connected`);
 
+  socket.on("ping", () => {
+    socket.emit("pong");
+  });
+
   game.addPlayer(socket);
 
   socket.on("disconnect", () => {
@@ -28,5 +32,5 @@ io.on("connection", (socket) => {
 });
 
 server.listen(config.port, function () {
-  console.log(`server running at port ${config.port}`);
+  console.log(`server running at http://localhost:${config.port}`);
 });
