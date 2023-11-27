@@ -1,24 +1,32 @@
 const socketio = require("socket.io");
 const config = require("./config");
 
+/** @typedef { { score: number, x: number, y: number, down: boolean, up: boolean } } Player */
+
 const randSign = () => Math.floor(Math.random() * 2) * 2 - 1;
 
 class Game {
-  /** @typedef { { score: number, x: number, y: number, down: boolean, up: boolean } } Player */
-  /** @type { { players: Array<Player>, ball: { x: number, y: number, vx: number, vy: number } } } */
+  /**
+   * current state of the game
+   * @type { { players: Array<Player>, ball: { x: number, y: number, vx: number, vy: number } } }
+   */
   gameState = {
     players: [{ score: 0 }, { score: 0 }],
     ball: {},
   };
+  /** direction of next serve */
+  #serveDir = randSign();
 
-  /** @type {Array<socketio.Socket>} */
+  /** timestamp of next tick (performance.now()) */
+  #nextTick = -1;
+
+  /**
+   * list of sockets connected to game instance
+   * @type {Array<socketio.Socket>}
+   */
   sockets = [];
 
-  /** @type {socketio.Server} */
-  io;
-
-  constructor(io) {
-    this.io = io;
+  constructor() {
     this.#newGame();
   }
 
@@ -44,9 +52,17 @@ class Game {
 
     if (this.sockets.length == 2) {
       console.log("game started!");
-      setInterval(() => {
-        this.#update();
-      }, config.tickspeed);
+
+      let f = () => {
+        let now = performance.now();
+        if (this.#nextTick < 0) this.#nextTick = now;
+        if (now >= this.#nextTick) {
+          this.#nextTick += config.tickspeed;
+          this.#update();
+        }
+        setImmediate(f);
+      };
+      setImmediate(f);
     }
   }
 
@@ -58,14 +74,16 @@ class Game {
 
     this.gameState.ball.x = config.width / 2;
     this.gameState.ball.y = Math.floor(Math.random() * config.height);
-    this.gameState.ball.vx = randSign();
+    this.gameState.ball.vx = this.#serveDir;
     this.gameState.ball.vy = randSign();
   }
 
   #update() {
     this.#updatePlayers();
     this.#updateBall();
-    this.io.emit("state", this.gameState);
+    for (let socket of this.sockets) {
+      socket.emit("state", this.gameState);
+    }
   }
 
   #updatePlayers() {
@@ -94,10 +112,12 @@ class Game {
 
     if (b.x <= 0) {
       p2.score++;
+      this.#serveDir = 1;
       this.#newGame();
     }
     if (b.x >= config.width - 1) {
       p1.score++;
+      this.#serveDir = -1;
       this.#newGame();
     }
 

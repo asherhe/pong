@@ -9,7 +9,7 @@ const app = express();
 const server = http.createServer(app);
 const io = new socketio.Server(server);
 
-const game = new Game(io);
+const game = new Game();
 
 app.use((req, res, next) => {
   console.log(`GET ${req.url}`);
