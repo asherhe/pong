@@ -6,6 +6,6 @@ module.exports = {
 
   width: 64,
   height: 32,
-  tickspeed: 50,
+  tickspeed: 40,
   paddleSize: 6,
 };
