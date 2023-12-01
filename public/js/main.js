@@ -31,13 +31,17 @@
         let scale = windowHeight / height;
         $canvas.css(
           "transform",
-          `translate(${(windowWidth - width) / 2}px, ${(windowHeight - height) / 2}px) scale(${scale})`
+          `translate(${(windowWidth - width) / 2}px, ${
+            (windowHeight - height) / 2
+          }px) scale(${scale})`
         );
       } else {
         let scale = windowWidth / width;
         $canvas.css(
           "transform",
-          `translate(${(windowWidth - width) / 2}px, ${(windowHeight - height) / 2}px) scale(${scale})`
+          `translate(${(windowWidth - width) / 2}px, ${
+            (windowHeight - height) / 2
+          }px) scale(${scale})`
         );
       }
     }
@@ -77,7 +81,7 @@
     ctx.fillRect(p1.x, p1.y, 1, config.paddleSize);
     ctx.fillRect(p2.x, p2.y, 1, config.paddleSize);
 
-    ctx.fillRect(b.x, b.y, 1, 1);
+    ctx.fillRect(Math.round(b.x), Math.round(b.y), 1, 1);
 
     let p1ScoreStr = p1.score.toString(),
       p2ScoreStr = p2.score.toString();

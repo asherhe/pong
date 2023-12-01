@@ -79,26 +79,22 @@ class Game {
   }
 
   #update() {
-    this.#updatePlayers();
-    this.#updateBall();
-    for (let socket of this.sockets) {
-      socket.emit("state", this.gameState);
-    }
-  }
-
-  #updatePlayers() {
-    for (let i = 0; i < this.gameState.players.length; i++) {
+    let vel = [0, 0];
+    for (let i = 0; i < 2; i++) {
       let p = this.gameState.players[i];
-      if (p.up) p.y--;
-      if (p.down) p.y++;
+      if (p.up) vel[i]--;
+      if (p.down) vel[i]++;
 
-      if (p.y < 0) p.y = 0;
-      else if (p.y + config.paddleSize >= config.height)
+      p.y += vel[i];
+      if (p.y < 0) {
+        p.y = 0;
+        vel[i] = 0;
+      } else if (p.y + config.paddleSize >= config.height) {
         p.y = config.height - config.paddleSize;
+        vel[i] = 0;
+      }
     }
-  }
 
-  #updateBall() {
     let b = this.gameState.ball;
     b.x += b.vx;
     b.y += b.vy;
@@ -108,7 +104,14 @@ class Game {
 
     let p1Bounce = b.x == p1.x && p1.y <= b.y && b.y < p1.y + config.paddleSize,
       p2Bounce = b.x == p2.x && p2.y <= b.y && b.y < p2.y + config.paddleSize;
-    if (p1Bounce || p2Bounce) b.vx = -b.vx;
+    if (p1Bounce) {
+      b.vx = -b.vx;
+      b.vy += 0.5 * vel[0];
+    }
+    if (p2Bounce) {
+      b.vx = -b.vx;
+      b.vy += 0.5 * vel[1];
+    }
 
     if (b.x <= 0) {
       p2.score++;
@@ -127,6 +130,10 @@ class Game {
     } else if (b.y >= config.height - 1) {
       b.y = config.height - 1;
       b.vy = -b.vy;
+    }
+
+    for (let socket of this.sockets) {
+      socket.emit("state", this.gameState);
     }
   }
 }
