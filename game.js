@@ -82,16 +82,13 @@ class Game {
     let vel = [0, 0];
     for (let i = 0; i < 2; i++) {
       let p = this.gameState.players[i];
-      if (p.up) vel[i]--;
-      if (p.down) vel[i]++;
+      if (p.up) p.y--;
+      if (p.down) p.y++;
 
-      p.y += vel[i];
       if (p.y < 0) {
         p.y = 0;
-        vel[i] = 0;
       } else if (p.y + config.paddleSize >= config.height) {
         p.y = config.height - config.paddleSize;
-        vel[i] = 0;
       }
     }
 
@@ -106,11 +103,11 @@ class Game {
       p2Bounce = b.x == p2.x && p2.y <= b.y && b.y < p2.y + config.paddleSize;
     if (p1Bounce) {
       b.vx = -b.vx;
-      b.vy += 0.5 * vel[0];
+      b.vy = 3 * ((b.y - p1.y) / config.paddleSize - 0.5);
     }
     if (p2Bounce) {
       b.vx = -b.vx;
-      b.vy += 0.5 * vel[1];
+      b.vy = 3 * ((b.y - p2.y) / config.paddleSize - 0.5);
     }
 
     if (b.x <= 0) {
