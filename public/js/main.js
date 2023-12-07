@@ -82,7 +82,7 @@ function render() {
   ctx.fillRect(p1X, p1Y, 1, config.paddleSize);
   ctx.fillRect(p2X, p2Y, 1, config.paddleSize);
 
-  ctx.fillRect(ballX, ballY, 1, 1);
+  ctx.fillRect(Math.round(ballX), Math.round(ballY), 1, 1);
 
   let p1ScoreStr = p1Score.toString(),
     p2ScoreStr = p2Score.toString();
@@ -103,32 +103,49 @@ function render() {
 }
 
 function update() {
+  let p1V = 0;
   if (isKeyDown(87))
     // w
-    p1Y--;
+    p1V--;
   if (isKeyDown(83))
     // s
-    p1Y++;
+    p1V++;
 
-  if (p1Y < 0) p1Y = 0;
-  else if (p1Y + config.paddleSize >= height) p1Y = height - config.paddleSize;
+  p1Y += p1V;
+  if (p1Y < 0) {
+    p1Y = 0;
+    p1V = 0;
+  } else if (p1Y + config.paddleSize >= height) {
+    p1Y = height - config.paddleSize;
+    p1V = 0;
+  }
 
+  let p2V = 0;
   if (isKeyDown(73))
     // i
-    p2Y--;
+    p2V--;
   if (isKeyDown(75))
     // k
-    p2Y++;
-  if (p2Y < 0) p2Y = 0;
-  else if (p2Y + config.paddleSize >= height) p2Y = height - config.paddleSize;
+    p2V++;
+
+  p2Y += p2V;
+  if (p2Y < 0) {
+    p2Y = 0;
+    p2V = 0;
+  } else if (p2Y + config.paddleSize >= height) {
+    p2Y = height - config.paddleSize;
+    p2V = 0;
+  }
 
   ballX += ballVx;
   ballY += ballVy;
 
   if (ballX == p1X && p1Y <= ballY && ballY < p1Y + config.paddleSize) {
     ballVx = -ballVx;
+    ballVy += 0.5 * p1V;
   } else if (ballX == p2X && p2Y <= ballY && ballY < p2Y + config.paddleSize) {
     ballVx = -ballVx;
+    ballVy += 0.5 * p2V;
   }
 
   if (ballX <= 0) {
